@@ -83,9 +83,9 @@ git clone git@github.com:yianniy/ne-exercise.git
 cd ne-exercise
 ```
 
-You will need to create a ==**.secrets**== file. Each line of this file should contain an API key, which will be used as a bearer token during API authentication.
+You will need to create a **.secrets** file. Each line of this file should contain an API key, which will be used as a bearer token during API authentication.
 
-You may want to create a ==**.env**== file. Right now, only one environmental variable is supported.
+You may want to create a **.env** file. Right now, only one environmental variable is supported.
 
 ```
 HARD_LIMIT=1000
