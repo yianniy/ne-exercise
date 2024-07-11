@@ -37,6 +37,7 @@ def read_queue(token: Annotated[str, Depends(check_auth)], queue_id: int, db: Se
     raise HTTPException(status_code=404, detail="Queue not found")
   return db_queue
 
+# TODO add pagination
 @app.get("/records/")
 def read_records(token: Annotated[str, Depends(check_auth)], db: Session = Depends(get_db)):
   results = crud.get_records(db)

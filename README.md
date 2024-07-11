@@ -75,15 +75,84 @@ This repository implements the exercise described below.
 > Include a non-secret configuration option called `hard_limit` that caps the maximum records that can be processed per
 > invocation. This should be alterable by configuration file.
 
+## Set up
+
+Get a copy of the repository
+```
+git clone git@github.com:yianniy/ne-exercise.git
+cd ne-exercise
+```
+
+You will need to create a ==**.secrets**== file. Each line of this file should contain an API key, which will be used as a bearer token during API authentication.
+
+You may want to create a ==**.env**== file. Right now, only one environmental variable is supported.
+
+```
+HARD_LIMIT=1000
+```
+
 ## Running Locally
 
 To run locally.
 
 ```
-git clone git@github.com:yianniy/ne-exercise.git
-cd ne-exercise
 python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
 fastapi dev main.py
+```
+
+## OpenApi Docs
+
+http://127.0.0.1:8000/docs
+
+## API Call
+
+### Create an Queue Item
+
+```
+curl --location 'http://127.0.0.1:8000/queue' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: Bearer <your_token_from_.secrets>' \
+--data '{
+    "timestamp": "2024-07-11T15:05:36.726Z",
+    "value": 1.4236833084935818
+}'
+```
+
+### Read Queue
+```
+curl --location 'http://127.0.0.1:8000/queue' \
+--header 'Authorization: Bearer <your_token_from_.secrets>'
+```
+
+### Process Queue and create records
+
+#### All Queue items
+up to hard_limit
+
+```
+curl --location --request POST 'http://127.0.0.1:8000/records/' \
+--header 'Authorization: Bearer <your_token_from_.secrets>'
+```
+
+#### 10 Queue items
+
+```
+curl --location --request POST 'http://127.0.0.1:8000/records/10' \
+--header 'Authorization: Bearer <your_token_from_.secrets>'
+```
+
+#### Get SQL commands returned too
+
+```
+curl --location --request POST 'http://127.0.0.1:8000/records/10/1' \
+--header 'Authorization: Bearer <your_token_from_.secrets>'
+```
+
+## Read Records
+
+```
+curl --location 'http://127.0.0.1:8000/records/' \
+--header 'Authorization: Bearer <your_token_from_.secrets>'
 ```
