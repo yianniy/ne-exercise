@@ -150,9 +150,46 @@ curl --location --request POST 'http://127.0.0.1:8000/records/10/1' \
 --header 'Authorization: Bearer <your_token_from_.secrets>'
 ```
 
-## Read Records
+### Read Records
 
 ```
 curl --location 'http://127.0.0.1:8000/records/' \
 --header 'Authorization: Bearer <your_token_from_.secrets>'
 ```
+
+## Unit Tests
+
+From the project's root directory
+
+```
+pytest --disable-warnings
+```
+
+warnings are disabled, because they are all related to deprecated code within libraries being used.
+
+## Straying from the exercise parameters.
+
+##### A console command that processes the queue and saves the records to a SQLite database
+
+The shell script was not created. Instead, an API call that accomplishes this result was implemented.
+
+This is partly philosophical and partly a limit of the framework used.
+
+- **philosophical**: I am not a fan of people logging onto production servers and doing things there. All sorts of thing can go wrong.
+
+- **framework**: there is not easy way to run a function within fastapi without invoking the related API endpoint directly.
+
+If one want a CLI to process records, a curl call will suffice.
+
+```
+curl --location --request POST 'http://127.0.0.1:8000/records/' \
+--header 'Authorization: Bearer <your_token_from_.secrets>'
+```
+
+##### Error Handling
+
+FastApi handles error codes returned out of the box. It is possible to overwrite the defaults, but it doesn't seem like a good idea.
+
+- Bad tokens return a 401: Unauthorized, not 403
+- Negative values return a 422: Unprocessable Entity, not 400
+- Invalid timestamps return a 422: Unprocessable Entity, not 400
