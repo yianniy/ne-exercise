@@ -2,26 +2,26 @@ from pydantic import BaseModel, Field
 from datetime import datetime
 
 class QueueBase(BaseModel):
-    timestamp: datetime
-    value: float = Field(ge=0)
+  timestamp: datetime
+  value: float = Field(ge=0)
 
 class QueueCreate(QueueBase):
-    pass
+  pass
 
 class Queue(QueueBase):
-    id: int
+  id: int
 
-    class Config:
-        orm_mode = True
+  class Config:
+    orm_mode = True
 
 
 class RecordBase(BaseModel):
-    ts: datetime
-    val: float = Field(ge=0)
+  ts: datetime
+  val: float = Field(ge=0)
 
 class RecordCreate(RecordBase):
-    pass
+  pass
 
 class Record(BaseModel):
-    id: int
-    val_sql: float
+  id: int
+  val_sql: float
