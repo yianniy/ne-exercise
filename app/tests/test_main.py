@@ -142,3 +142,11 @@ def test_process_empty_queue():
 
   assert response.status_code == 200
   assert len(json) == 0
+
+# test that authentication fails.
+def test_bad_auth():
+  response = client.get(
+    "/records/", 
+    headers = {'Authorization': 'Bearer bad_token'},
+  )
+  assert response.status_code == 401
