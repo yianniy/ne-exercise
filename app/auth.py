@@ -5,7 +5,7 @@ security = HTTPBearer()
 
 def check_auth(token: str = Security(security)):
   secrets_file = open('.secrets', 'r')
-  secrets = secrets_file.read().split("\n")
+  secrets = secrets_file.read().splitlines()
 
   if token.credentials in secrets:
     return token

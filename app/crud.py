@@ -10,7 +10,7 @@ import logging
 def get_queue(db: Session, queue_id: int):
   return db.query(models.Queue).filter(models.Queue.id == queue_id).first()
 
-def get_queues(db: Session, skip: int = 0, limit: int = 100):
+def get_queues(db: Session, skip: int = 0, limit: int = settings.hard_limit):
   return db.query(models.Queue).offset(skip).limit(limit).all()
 
 def create_queue(db: Session, queue: schemas.QueueCreate):
@@ -20,8 +20,8 @@ def create_queue(db: Session, queue: schemas.QueueCreate):
   db.refresh(db_queue)
   return db_queue
 
-def get_records(db: Session, skip: int = 0, limit: int = 100):
-  return db.query(models.Record).offset(skip).limit(limit).all()
+def get_records(db: Session, skip: int = 0, limit: int = settings.hard_limit):
+  return db.query(models.Record).order_by(models.Record.ts.desc()).offset(skip).limit(limit).all()
 
 def create_records(db: Session, records: List[schemas.RecordCreate], verbose: bool = False):
   recordModels = []
@@ -30,6 +30,8 @@ def create_records(db: Session, records: List[schemas.RecordCreate], verbose: bo
 
   db.add_all(recordModels)
 
+  # TODO disable this option for production environment
+  # TODO update db engine creation so that logging is off in production env
   if verbose: 
     # highjack the logger and send it to a variable, thus capturing the logs that show SQL statements
     logger = logging.getLogger("sqlalchemy.engine")
@@ -55,12 +57,15 @@ def create_records(db: Session, records: List[schemas.RecordCreate], verbose: bo
   if verbose: 
     return {
       "records": recordModels,
-      "verbose": log_contents,
-      }
+      "verbose": log_contents.splitlines(),
+    }
   else:
     return recordModels
 
-def bulk_records(db: Session, limit: int, verbose: bool = False):
+def bulk_records(db: Session, limit: int = settings.hard_limit, verbose: bool = False):
+  if limit == 0:
+    limit = settings.hard_limit
+
   queue = db.query(models.Queue).order_by(models.Queue.timestamp.desc()).offset(0).limit(min(limit, settings.hard_limit)).all()
   records = []
 
